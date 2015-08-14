@@ -3,6 +3,10 @@
 #ifndef _AUDIO_STRUCTURES_H
 #define _AUDIO_STRUCTURES_H
 
+#include "Arduino.h"
+#include "FastLED.h"
+#include "sqrt_integer.h"
+
 #undef SHOW_REFRESH_RATE
 #undef PRINT_DEBUG
 #define FADE_RATE 17
@@ -10,17 +14,27 @@
 #define CHAR_BIT 8
 
 // The number of amplitude bits per audio bucket, max 8.
-#ifndef RESOLUTION
-#define RESOLUTION				4
-#endif
-
-// The number of frequency buckets we're transmitting
-#ifndef FREQ_BINS				
-#define FREQ_BINS				8
-#endif
+#define RESOLUTION	8
 
 #define MIN_PEAK_VALUE 2
 
+enum DisplayFunction {
+	Lin,
+	Log,
+	Sq,
+	Sqrt
+};
+
+
+typedef struct {
+	int16_t startFFTBin;
+	int16_t endFFTBin;
+	int16_t startLEDNum;
+	int16_t endLEDNum;
+	DisplayFunction displayFunction;
+} DisplayBin;
+
+template<int FREQ_BINS>
 struct FFTBinData {
 	uint8_t peak;
 	uint8_t binValues[FREQ_BINS];
@@ -40,6 +54,54 @@ struct FFTBinData {
 		Serial.println(")");
 	}
 };
+
+float applyFunction(DisplayFunction f, uint16_t value) {
+	switch(f) {
+	case DisplayFunction::Log:
+		return log(value);
+	case DisplayFunction::Sq:
+		return pow(value,2);
+	case DisplayFunction::Sqrt:
+		return sqrt(value);
+	case DisplayFunction::Lin:
+	default:
+		return value;
+	}
+}
+
+struct DisplayBinState {
+	DisplayBin * configuration; 
+	CRGB * leds;
+	uint8_t num_leds;
+	uint8_t * brightness;
+	uint8_t value;
+	float avgV;
+	int avgCount;
+	float applyDisplayFunction(uint16_t value) {
+		return applyFunction(configuration->displayFunction, value);
+	}
+
+};
+
+
+const float MAX_LOG = applyFunction(DisplayFunction::Log, _BV(RESOLUTION)-1);
+const float MAX_SQ = applyFunction(DisplayFunction::Sq, _BV(RESOLUTION)-1);
+const float MAX_SQRT = applyFunction(DisplayFunction::Sqrt, _BV(RESOLUTION)-1);
+const float MAX_LIN = applyFunction(DisplayFunction::Lin, _BV(RESOLUTION)-1);
+
+float functionMaxValue(DisplayFunction f) {
+	switch(f) {
+	case DisplayFunction::Log:
+		return MAX_LOG;
+	case DisplayFunction::Sq:
+		return MAX_SQ;
+	case DisplayFunction::Sqrt:
+		return MAX_SQRT;
+	case DisplayFunction::Lin:
+	default:
+		return MAX_LIN;
+	};
+}
 
 
 #endif

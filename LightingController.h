@@ -8,8 +8,7 @@
 #else
 	#include "WProgram.h"
 #endif
-#include "FastLED.h"
-#include "LedFxUtilities.h"
+#include "FastLED/FastLED.h"
 template<uint8_t BOX_COUNT>
 	class LightingControllerClass
 {
