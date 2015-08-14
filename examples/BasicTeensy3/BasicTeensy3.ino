@@ -8,15 +8,12 @@
 #include "Wire.h"
 #include "Audio.h"
 
-#define FFT_BINS 1
-#define NUM_LEDS 60
+#define FFT_BINS 3
+#define NUM_LEDS 168
 #define LED_PIN 17
 #define BRIGHTNESS_KNOB_PIN A6
-#define INPUT_PIN A2
-#define STARTCOLOR HUE_BLUE
-#define ENDCOLOR HUE_PINK
-CRGB leds[NUM_LEDS] = {0};
 
+CRGB leds[NUM_LEDS] = {0};
 
 // Default connection to A2
 AudioInputAnalog  audioInput;         
@@ -24,7 +21,7 @@ AudioAnalyzeFFT1024  myFFT;
 // Create Audio connections between the components
 AudioConnection c2(audioInput, 0, myFFT, 0);
 
-AudioVisualizer<NUM_LEDS, FFT_BINS, INPUT_PIN> visualizer(myFFT);
+AudioVisualizer<NUM_LEDS, FFT_BINS> visualizer(myFFT);
 DisplayBin * bins;
 	
 
@@ -47,13 +44,14 @@ void setup() {
 	
 	visualizer.init(leds, bins);
 	visualizer.renderer.setSpeed(2000,11000,10000);
-	visualizer.renderer.setColorSweep(STARTCOLOR, ENDCOLOR, 240);
+	visualizer.renderer.setColorSweep(HUE_BLUE, HUE_PINK, 240);
 	visualizer.enableSerialCommands();
 	Serial.println("Setup Complete");
 }
 
-int binSizes[] = {5};
-int ledSizes[] = {NUM_LEDS};
+int binSizes[] = {3,7,31};
+int ledSizes[] = {72,24,72};
+
 void configureBins() {
 	bins = visualizer.getDefaultBins();
 	int binIndex = 0;

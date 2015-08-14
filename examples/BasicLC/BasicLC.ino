@@ -10,11 +10,10 @@
 #define LED_PIN 17
 #define BRIGHTNESS_KNOB_PIN A6
 #define INPUT_PIN A2
-#define STARTCOLOR HUE_BLUE
-#define ENDCOLOR HUE_PINK
+
 CRGB leds[NUM_LEDS] = {0};
 
-AudioVisualizer<NUM_LEDS, FFT_BINS, INPUT_PIN> visualizer;
+AudioVisualizer<NUM_LEDS, FFT_BINS> visualizer(INPUT_PIN);
 DisplayBin * bins;
 	
 
@@ -33,7 +32,7 @@ void setup() {
 	
 	visualizer.init(leds, bins);
 	visualizer.renderer.setSpeed(2000,11000,10000);
-	visualizer.renderer.setColorSweep(STARTCOLOR, ENDCOLOR, 240);
+	visualizer.renderer.setColorSweep(HUE_BLUE, HUE_PINK, 240);
 	visualizer.enableSerialCommands();
 	Serial.println("Setup Complete");
 }

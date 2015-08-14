@@ -25,16 +25,16 @@ limitations under the License.
 
 
 
-template<int NUM_LEDS, int DISPLAY_BINS = 8,  int AUDIO_PIN = A2>
+template<int NUM_LEDS, int DISPLAY_BINS = 8>
 class AudioVisualizer {
 public:
-	AudioProcessor<DISPLAY_BINS, AUDIO_PIN, 1> processor;
+	AudioProcessor<DISPLAY_BINS, 1> processor;
 	LEDStripAudioRenderer<DISPLAY_BINS> renderer;
 	LightingControllerClass<DISPLAY_BINS> controller;
 
 #ifdef __MKL26Z64__
-	AudioVisualizer() : 
-		processor(8, 12, EXTERNAL), 
+	AudioVisualizer(int inputPin) : 
+		processor(inputPin, 8, 12, EXTERNAL), 
 		enableSerialCMD(false) {
 	}
 #else

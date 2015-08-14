@@ -30,7 +30,7 @@ limitations under the License.
 #define FFT_BIN_SIZE_HZ (MAX_FFT_HZ / (float)FFT_OUTPUT_SIZE)
 #define HZ_TO_NEAREST_FFT_BIN(h) (round((float)h/FFT_BIN_SIZE_HZ))
 
-template<int FREQ_BINS = 8, int AUDIO_PIN = A2, int MAX_VISUALIZERS = 16, int BUILD_NUM = 0x01>
+template<int FREQ_BINS = 8, int MAX_VISUALIZERS = 16, int BUILD_NUM = 0x01>
 class AudioProcessor
 {
 public:
@@ -44,8 +44,8 @@ public:
 			visualizer[i] = NULL;
 	}
 #else
-	AudioProcessor(int averaging=8, int resolution=12, uint8_t analogReferenceType = INTERNAL) {
-		myFFT.init(AUDIO_PIN, averaging, resolution, analogReferenceType);
+	AudioProcessor(int inputPin, int averaging=8, int resolution=12, uint8_t analogReferenceType = INTERNAL) {
+		myFFT.init(inputPin, averaging, resolution, analogReferenceType);
 		myFFT.enable();
 		for(int i = 0; i < MAX_VISUALIZERS; i++)
 			visualizer[i] = NULL;
